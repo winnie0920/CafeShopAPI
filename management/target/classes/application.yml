@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: management
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/cafeshop
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    servlet:
+      multipart:
+        # 最大單個文件大小
+        max-file-size: 10MB
+        # 最大請求大小（包括所有文件和表單資料）
+        max-request-size: 1000MB
+
+mybatis:
+  mapper-locations: classpath*:com/cafeshop/mapper/*.xml
+  type-aliases-package: com.cafeshop.pojo
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    # 開啟駝峰命名映射開關
+    map-underscore-to-camel-case: true
+
+
+# 配置日誌資料，查看spring事物管理的底層日誌
+logging:
+  level:
+    org.springframework.jdbc.support.JdbcTransactionManager: debug
+
+
+
+cloudflare:
+  r2:
+    endpoint: https://3601dd7feb77d449f66467bfce780c3d.r2.cloudflarestorage.com
+    base-url: https://pub-248e3a67abac41649f69b5e50260c0f5.r2.dev/
+    accessKey: ${R2_ACCESS_KEY_ID}
+    secretKey: ${R2_SECRET_ACCESS_KEY}
+    bucket: java-ai

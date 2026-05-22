@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafeshop.mapper.ThemeMapper">
+    <insert id="postTheme" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO theme (name, content,is_sale, image_url,create_time,update_time)
+        VALUES (#{name}, #{content}, #{isSale}, #{imageUrl}, #{create_time},#{update_time})
+    </insert>
+
+    <select id="getMeals" resultType="com.cafeshop.Menu.MealResponse">
+
+        SELECT
+            id,
+            theme_id,
+            name,
+            price,
+            description,
+            image_url,
+            count,
+            is_sale,
+            create_time,
+            update_time
+        FROM meal
+
+    </select>
+
+    <select id="getMealById" resultType="com.cafeshop.Menu.MealResponse">
+
+        SELECT
+            id,
+            theme_id,
+            name,
+            price,
+            description,
+            image_url,
+            count,
+            is_sale,
+            create_time,
+            update_time
+        FROM meal
+        WHERE id = #{id}
+
+    </select>
+
+    <insert id="postMeal" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO meal (theme_id, name,price,description,image_url,count,is_sale)
+        VALUES (#{themeId}, #{name} , #{price} , #{description} , #{imageUrl} , #{count} , #{isSale})
+    </insert>
+
+    <insert id="insertMealOptions">
+        INSERT INTO meal_option_map (meal_id, group_id)
+        VALUES
+        <foreach collection="groupIds" item="groupId" separator=",">
+            (#{mealId}, #{groupId})
+        </foreach>
+    </insert>
+
+    <select id="getMealOptionIds" resultType="java.lang.Long">
+
+        SELECT group_id
+        FROM meal_option_map
+        WHERE meal_id = #{mealId}
+
+    </select>
+
+</mapper>

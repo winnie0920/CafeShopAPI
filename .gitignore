@@ -1,0 +1,14 @@
+/target
+*.iml
+.idea
+*.class
+
+# logs
+*.log
+
+# OS
+.DS_Store
+
+# spring config（看情況）
+application-dev.yml
+application-prod.yml
