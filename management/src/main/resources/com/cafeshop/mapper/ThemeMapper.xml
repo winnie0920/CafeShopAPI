@@ -3,65 +3,63 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.cafeshop.mapper.ThemeMapper">
+    <!--新增主題-->
     <insert id="postTheme" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO theme (name, content,is_sale, image_url,create_time,update_time)
-        VALUES (#{name}, #{content}, #{isSale}, #{imageUrl}, #{create_time},#{update_time})
+        INSERT INTO theme (name, content,is_sale, image_url)
+        VALUES (#{name}, #{content}, #{isSale}, #{imageUrl})
     </insert>
 
-    <select id="getMeals" resultType="com.cafeshop.Menu.MealResponse">
+    <!-- 定義一對多對應關係，讓 MyBatis 自動把餐點塞進 children 裡面 -->
+    <resultMap id="ThemeTreeResultMap" type="com.cafeshop.Menu.ThemeResponse">
+        <id property="id" column="theme_id_key"/>
+        <result property="name" column="theme_name"/>
+        <result property="content" column="theme_content"/>
+        <result property="isSale" column="theme_is_sale"/>
+        <result property="imageUrl" column="theme_image_url"/>
+        <result property="createTime" column="theme_create_time"/>
+        <result property="updateTime" column="theme_update_time"/>
 
+        <!-- collection 會自動把對應的餐點打包進名為 children 的 List 裡面 -->
+        <collection property="children" ofType="com.cafeshop.Menu.MealResponse">
+            <id property="id" column="meal_id"/>
+            <result property="themeId" column="meal_theme_id"/>
+            <result property="name" column="meal_name"/>
+            <result property="price" column="meal_price"/>
+            <result property="description" column="meal_description"/>
+            <result property="imageUrl" column="meal_image_url"/>
+            <result property="count" column="meal_count"/>
+            <result property="isSale" column="meal_is_sale"/>
+            <result property="createTime" column="meal_create_time"/>
+            <result property="updateTime" column="meal_update_time"/>
+        </collection>
+    </resultMap>
+    <!--查詢全部、單一主題（含餐點 children）-->
+    <!-- 核心查詢：使用 LEFT JOIN 確保一定有餐點資料 -->
+    <select id="getThemesWithMeals" resultMap="ThemeTreeResultMap">
         SELECT
-            id,
-            theme_id,
-            name,
-            price,
-            description,
-            image_url,
-            count,
-            is_sale,
-            create_time,
-            update_time
-        FROM meal
-
+        t.id AS theme_id_key,
+        t.name AS theme_name,
+        t.content AS theme_content,
+        t.is_sale AS theme_is_sale,
+        t.image_url AS theme_image_url,
+        t.create_time AS theme_create_time,
+        t.update_time AS theme_update_time,
+        m.id AS meal_id,
+        m.theme_id AS meal_theme_id,
+        m.name AS meal_name,
+        m.price AS meal_price,
+        m.description AS meal_description,
+        m.image_url AS meal_image_url,
+        m.count AS meal_count,
+        m.is_sale AS meal_is_sale,
+        m.create_time AS meal_create_time,
+        m.update_time AS meal_update_time
+        FROM theme t
+        LEFT JOIN meal m ON t.id = m.theme_id
+        <where>
+            <if test="id != null">
+                t.id = #{id}
+            </if>
+        </where>
     </select>
-
-    <select id="getMealById" resultType="com.cafeshop.Menu.MealResponse">
-
-        SELECT
-            id,
-            theme_id,
-            name,
-            price,
-            description,
-            image_url,
-            count,
-            is_sale,
-            create_time,
-            update_time
-        FROM meal
-        WHERE id = #{id}
-
-    </select>
-
-    <insert id="postMeal" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO meal (theme_id, name,price,description,image_url,count,is_sale)
-        VALUES (#{themeId}, #{name} , #{price} , #{description} , #{imageUrl} , #{count} , #{isSale})
-    </insert>
-
-    <insert id="insertMealOptions">
-        INSERT INTO meal_option_map (meal_id, group_id)
-        VALUES
-        <foreach collection="groupIds" item="groupId" separator=",">
-            (#{mealId}, #{groupId})
-        </foreach>
-    </insert>
-
-    <select id="getMealOptionIds" resultType="java.lang.Long">
-
-        SELECT group_id
-        FROM meal_option_map
-        WHERE meal_id = #{mealId}
-
-    </select>
-
 </mapper>

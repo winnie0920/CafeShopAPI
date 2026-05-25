@@ -1,4 +1,4 @@
-package com.cafeshop.service.ipml;
+package com.cafeshop.service.impl;
 
 
 import com.cafeshop.CloudflareProperties;
@@ -13,8 +13,6 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-
-import java.time.Duration;
 
 @Slf4j
 @Service

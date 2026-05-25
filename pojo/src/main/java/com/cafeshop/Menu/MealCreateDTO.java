@@ -1,15 +1,11 @@
 package com.cafeshop.Menu;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class MealResponse {
-    private Long id;
+public class MealCreateDTO {
     private Long themeId;
     private String name;
     private Integer price;
@@ -17,7 +13,5 @@ public class MealResponse {
     private String imageUrl;
     private Integer count;
     private Long isSale;
-    private List<Long> groupIds;
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
+    private List<Long> groupIds; // 選項群組 ID 列表
 }

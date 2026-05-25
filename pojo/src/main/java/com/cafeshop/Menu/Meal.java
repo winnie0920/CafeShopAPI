@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -18,5 +19,6 @@ public class Meal {
     private String imageUrl;
     private Integer count;
     private Long isSale;
-    private List<Long> groupIds;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 }
