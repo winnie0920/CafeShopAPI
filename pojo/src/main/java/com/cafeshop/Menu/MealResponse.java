@@ -17,7 +17,7 @@ public class MealResponse {
     private String imageUrl;
     private Integer count;
     private Long isSale;
-    private List<Long> groupIds;
+    private List<OptionGroupResponse> options;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
 }

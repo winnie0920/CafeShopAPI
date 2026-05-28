@@ -1,5 +1,6 @@
 package com.cafeshop.service.impl;
 import com.cafeshop.Menu.*;
+import com.cafeshop.mapper.OptionMapper;
 import com.cafeshop.mapper.ThemeMapper;
 import com.cafeshop.service.ThemeService;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -15,6 +19,7 @@ import java.util.List;
 public class ThemeServiceImpl implements ThemeService {
 
     private final ThemeMapper themeMapper;
+    private final OptionServiceImpl optionService;
     private final UploadServiceImpl uploadService;
     /**
      * 查詢全部主題
@@ -23,6 +28,14 @@ public class ThemeServiceImpl implements ThemeService {
     public List<ThemeResponse> getThemesTree() {
         // 1. 傳入 null，查出所有主題以及各自底下的 children 餐點
         List<ThemeResponse> trees = themeMapper.getThemesWithMeals(null);
+        for (ThemeResponse theme : trees) {
+            for (MealResponse meal : theme.getChildren()) {
+
+                List<OptionGroupResponse> options =
+                        optionService.getOptionsByMealId(meal.getId());
+                meal.setOptions(options);
+            }
+        }
         return trees;
     }
     /**
@@ -37,7 +50,13 @@ public class ThemeServiceImpl implements ThemeService {
         if (results == null || results.isEmpty()) {
             throw new RuntimeException("找不到該主題");
         }
+        ThemeResponse theme = results.get(0);
 
+        for (MealResponse meal : theme.getChildren()) {
+            List<OptionGroupResponse> options =
+                    optionService.getOptionsByMealId(meal.getId());
+            meal.setOptions(options);
+        }
         return  results.get(0);
     }
     /**
@@ -103,21 +122,5 @@ public class ThemeServiceImpl implements ThemeService {
     @Override
     public List<ThemeDropdownDTO>  getThemesDropdown() {
         return themeMapper.getThemesDropdown();
-    }
-    /**
-     * ThemeResponse 轉換 Theme
-     * @param theme
-     * @return
-     */
-    private ThemeResponse convertToResponse(Theme theme) {
-        ThemeResponse res = new ThemeResponse();
-        res.setId(theme.getId());
-        res.setName(theme.getName());
-        res.setContent(theme.getContent());
-        res.setIsSale(theme.getIsSale());
-        res.setImageUrl(theme.getImageUrl());
-        res.setCreateTime(theme.getCreateTime());
-        res.setUpdateTime(theme.getUpdateTime());
-        return res;
     }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cafeshop.mapper.OptionMapper">
+    <select id="getOptionsByMealId" resultType="com.cafeshop.Menu.OptionRow">
+        SELECT
+            g.id AS groupId,
+            g.name AS groupName,
+            g.type AS type,
+
+            c.id AS choiceId,
+            c.name AS choiceName,
+            c.price AS price
+
+        FROM meal_option_map m
+                 JOIN option_group g ON g.id = m.group_id
+                 JOIN option_choice c ON c.group_id = g.id
+
+        WHERE m.meal_id = #{mealId}
+    </select>
+</mapper>

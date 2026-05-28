@@ -16,6 +16,7 @@
         <result property="content" column="theme_content"/>
         <result property="isSale" column="theme_is_sale"/>
         <result property="imageUrl" column="theme_image_url"/>
+        <result property="count" column="theme_count"/>
         <result property="createTime" column="theme_create_time"/>
         <result property="updateTime" column="theme_update_time"/>
 
@@ -42,6 +43,7 @@
         t.content AS theme_content,
         t.is_sale AS theme_is_sale,
         t.image_url AS theme_image_url,
+        (SELECT COUNT(*)FROM meal mm WHERE mm.theme_id = t.id) AS theme_count,
         t.create_time AS theme_create_time,
         t.update_time AS theme_update_time,
         m.id AS meal_id,

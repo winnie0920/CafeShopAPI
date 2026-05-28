@@ -14,5 +14,6 @@ public class ThemeResponse {
     private String imageUrl;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
+    private Integer count;
     private List<MealResponse> children; // 樹狀結構子餐點
 }

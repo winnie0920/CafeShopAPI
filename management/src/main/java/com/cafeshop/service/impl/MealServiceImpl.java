@@ -1,9 +1,6 @@
 package com.cafeshop.service.impl;
 
-import com.cafeshop.Menu.MealCreateDTO;
-import com.cafeshop.Menu.MealResponse;
-import com.cafeshop.Menu.Meal;
-import com.cafeshop.Menu.MealUpdateDTO;
+import com.cafeshop.Menu.*;
 import com.cafeshop.mapper.MealMapper;
 import com.cafeshop.service.MealService;
 import lombok.RequiredArgsConstructor;
@@ -20,20 +17,27 @@ import java.util.List;
 public class MealServiceImpl implements MealService {
 
     private final MealMapper mealMapper;
+    private final OptionServiceImpl optionService;
     /**
      * 查詢全部餐點
      */
     @Override
     public List<MealResponse> getMeals() {
-        List<Meal> meals = mealMapper.getMeals();
 
-        return meals.stream().map(meal -> {
+        List<Meal> meals = mealMapper.getMeals();
+        List<MealResponse> result = new ArrayList<>();
+
+        for (Meal meal : meals) {
             MealResponse res = convertToResponse(meal);
-            List<Long> groupIds = mealMapper.getMealOptionIds(meal.getId());
-            res.setGroupIds(groupIds != null ? groupIds : new ArrayList<>());
-            return res;
-        }).toList();
+            List<OptionGroupResponse> options =
+                    optionService.getOptionsByMealId(meal.getId());
+            res.setOptions(options);
+            result.add(res);
+        }
+
+        return result;
     }
+
     /**
      * 查詢單一餐點
      * @param id
@@ -45,8 +49,9 @@ public class MealServiceImpl implements MealService {
         if (meal == null) return null;
 
         MealResponse res = convertToResponse(meal);
-        List<Long> groupIds = mealMapper.getMealOptionIds(id);
-        res.setGroupIds(groupIds != null ? groupIds : new ArrayList<>());
+        List<OptionGroupResponse> options =
+                optionService.getOptionsByMealId(meal.getId());
+        res.setOptions(options);
         return res;
     }
     /**

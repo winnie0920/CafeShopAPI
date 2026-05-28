@@ -19,7 +19,7 @@ public class ThemeController {
      */
     @GetMapping
     public Result getThemes(@RequestParam(required = false) Long id) {
-        if (id != null) {
+        if (id != null && id >= 0) {
             return Result.success(themeService.getThemeById(id), "查詢單一主題成功");
         }
         return Result.success(themeService.getThemesTree(), "查詢完整菜單樹成功");
